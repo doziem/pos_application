@@ -1,6 +1,7 @@
 package com.doziem.pos.mapper;
 
 import com.doziem.pos.model.User;
+import com.doziem.pos.request.UpdateUserRequest;
 import com.doziem.pos.request.UserRequest;
 import com.doziem.pos.response.UserResponse;
 import lombok.Data;
@@ -26,6 +27,18 @@ public class UserMapper {
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
+                .lastLogin(user.getLastLogin())
+                .build();
+    }
+
+    public static User updateToResponse(User user, UpdateUserRequest request) {
+        return User.builder()
+                .userId(user.getUserId())
+                .email(request.getEmail() != null ? request.getEmail() : user.getEmail())
+                .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber())
+                .role(request.getRole() != null ? request.getRole() : user.getRole())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(ZonedDateTime.now())
                 .lastLogin(user.getLastLogin())
                 .build();
     }
