@@ -56,6 +56,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body("Invalid or incomplete request");
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)

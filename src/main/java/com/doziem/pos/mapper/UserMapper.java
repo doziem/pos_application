@@ -5,10 +5,11 @@ import com.doziem.pos.request.UpdateUserRequest;
 import com.doziem.pos.request.UserRequest;
 import com.doziem.pos.response.UserResponse;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 
-@Data
+@Component
 public class UserMapper {
 
     public static User toEntity(UserRequest request) {
@@ -16,6 +17,17 @@ public class UserMapper {
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
                 .role(request.getRole())
+                .build();
+    }
+
+    public static  UserRequest toDto(User user) {
+        return UserRequest.builder()
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .role(user.getRole())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .lastLogin(user.getLastLogin())
                 .build();
     }
 
