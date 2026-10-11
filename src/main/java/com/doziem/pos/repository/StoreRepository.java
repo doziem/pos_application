@@ -1,5 +1,6 @@
 package com.doziem.pos.repository;
 
+import com.doziem.pos.enums.StoreStatus;
 import com.doziem.pos.model.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,5 +22,5 @@ public interface StoreRepository extends JpaRepository<Store, String> {
         """)
     Page<Store> searchStores(@Param("query") String query, Pageable pageable);
 
-    Page<Store> findByStatus(String status, Pageable pageable);
+    Page<Store> findByStatus(StoreStatus status, Pageable pageable);
 }

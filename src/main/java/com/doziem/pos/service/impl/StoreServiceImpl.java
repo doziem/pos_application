@@ -1,5 +1,6 @@
 package com.doziem.pos.service.impl;
 
+import com.doziem.pos.enums.StoreStatus;
 import com.doziem.pos.enums.UserRole;
 import com.doziem.pos.exception.ResourceNotFoundException;
 import com.doziem.pos.mapper.StoreMapper;
@@ -11,6 +12,8 @@ import com.doziem.pos.request.StoreRequest;
 import com.doziem.pos.response.StoreResponse;
 import com.doziem.pos.service.StoreService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ public class StoreServiceImpl implements StoreService {
 
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(StoreServiceImpl.class);
 
     @Override
     public StoreResponse createStore(StoreRequest request, String userId) {
@@ -80,6 +85,7 @@ public class StoreServiceImpl implements StoreService {
                 .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
 
         if (!store.getStoreAdmin().getUserId().equals(userId) && store.getStoreAdmin().getRole() != UserRole.ROLE_ADMIN) {
+            logger.warn("Unauthorized attempt to delete store with ID: {}", storeId);
             throw new ResourceNotFoundException("Unauthorized to delete store");
         }
 
@@ -106,7 +112,14 @@ public class StoreServiceImpl implements StoreService {
         }
         pageable = Pageable.ofSize(pageable.getPageSize()).withPage(pageable.getPageNumber());
 
-        return storeRepository.findByStatus(status, pageable)
+        StoreStatus storeStatus;
+        try {
+            storeStatus = StoreStatus.valueOf(status.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid store status: " + status);
+        }
+
+        return storeRepository.findByStatus(storeStatus, pageable)
                 .stream()
                 .map(StoreMapper::toResponse)
                 .toList();

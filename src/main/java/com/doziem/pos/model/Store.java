@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Setter
@@ -35,6 +37,10 @@ public class Store {
     private ZonedDateTime updatedAt;
 
     private StoreContact contact = new StoreContact();
+
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Product> products = new ArrayList<>();
 
     @PrePersist
     protected void onCreated(){

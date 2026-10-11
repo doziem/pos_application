@@ -2,8 +2,11 @@ package com.doziem.pos.controller;
 
 import com.doziem.pos.request.StoreRequest;
 import com.doziem.pos.service.StoreService;
+import com.doziem.pos.service.impl.StoreServiceImpl;
 import com.doziem.pos.system.Result;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class StoreController {
     private final StoreService storeService;
+
+    private final Logger logger = LoggerFactory.getLogger(StoreController.class);
 
     @PostMapping("/create/{userId}")
     public ResponseEntity<Result> createStore(@RequestBody StoreRequest request, @PathVariable String userId) {
@@ -39,6 +44,7 @@ public class StoreController {
         try {
             return ResponseEntity.ok(new Result(true, "Store retrieved successfully", storeService.getStoreById(storeId)));
         } catch (Exception e) {
+            logger.error("Error retrieving store ", e.getMessage());
             return ResponseEntity.status(500).body(new Result(false, e.getMessage()));
         }
     }
@@ -82,6 +88,7 @@ public class StoreController {
         try {
             return ResponseEntity.ok(new Result(true, "Stores retrieved successfully", storeService.getStoresByStatus(status, pageable)));
         } catch (Exception e) {
+            logger.error("Error retrieving stores with status: {}", e.getMessage());
             return ResponseEntity.status(500).body(new Result(false, e.getMessage()));
         }
     }
